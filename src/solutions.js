@@ -1,8 +1,7 @@
-// Webflow is initialized
+// v1.0.0
 window.Webflow ||= [];
 window.Webflow.push(() => {
   // Run code once webflow is initialized
-  console.log('hello webflow');
 
   // Page Load Animation
   function pageLoad() {
@@ -35,8 +34,7 @@ window.Webflow.push(() => {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Page Scroll Animation
-  function solutionsScroll() {
+  function solutionsTabChange() {
     const tabLinks = document.querySelectorAll('.process-split_tab-link');
 
     // for each tab link add an event listener that will scroll to the correct id
@@ -54,7 +52,29 @@ window.Webflow.push(() => {
         });
       });
     });
+  }
+  function solutionsTabLine() {
+    const triggerEl = document.querySelector('.process_split-component');
+    const lineFill = document.querySelector('.process-split_tabs-line-fill');
+    if (!triggerEl || !lineFill) return;
 
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: triggerEl,
+        start: 'top top',
+        end: 'bottom bottom',
+        ease: 'none',
+        scrub: 1,
+      },
+    });
+    tl.to(lineFill, {
+      height: '100%',
+      ease: 'none',
+    });
+  }
+
+  // Page Scroll Animation
+  function solutionsScrollImages() {
     const processItems = document.querySelectorAll('.process-split_content');
     const processImages = document.querySelectorAll('.process-split_image');
     const processTabs = document.querySelectorAll('.process-split_tab-link');
@@ -99,5 +119,29 @@ window.Webflow.push(() => {
       });
     });
   }
-  solutionsScroll();
+
+  let mm = gsap.matchMedia();
+
+  mm.add(
+    {
+      //This is the conditions object
+      isMobile: '(max-width: 767px)',
+      isTablet: '(min-width: 768px)  and (max-width: 991px)',
+      isDesktop: '(min-width: 992px)',
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+    },
+    (context) => {
+      let { isMobile, isTablet, isDesktop, reduceMotion } = context.conditions;
+      console.log(context.conditions);
+      if (isDesktop || isTablet) {
+        //Run Desktop Code
+        solutionsScrollImages();
+        solutionsTabChange();
+        solutionsTabLine();
+      }
+      if (isMobile) {
+        //Run Mobile Code
+      }
+    }
+  );
 });
